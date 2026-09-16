@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Menu, Search, Bell, ChevronDown, UserRound, CalendarDays, Sparkles, X, Loader2, Bot } from 'lucide-react'
-import { askAssistant } from '../services/api'
+import { askAssistant, subscribeBackendStatus } from '../services/api'
 import GeographicMap from './GeographicMap'
 
 const META = {
@@ -16,6 +16,7 @@ export default function Header({ onMenuClick }) {
   const meta = META[pathname] ?? { title: 'Dashboard', sub: '' }
   const today = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
 
+  const [connected, setConnected] = useState(false)
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
@@ -24,6 +25,11 @@ export default function Header({ onMenuClick }) {
   const [history, setHistory] = useState([])
 
   const popoverRef = useRef(null)
+
+  useEffect(() => {
+    return subscribeBackendStatus(setConnected)
+  }, [])
+
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -153,6 +159,10 @@ export default function Header({ onMenuClick }) {
       </div>
 
       <div className="header-right">
+        <span className={`status-pill ${connected ? 'status-live' : 'status-demo'}`} title={connected ? "Connected to PostgreSQL backend" : "Demo Mode: Displaying data from local fallback cache. Set VITE_API_BASE_URL in your hosting provider to connect live backend."}>
+          <span className="status-indicator-dot" />
+          {connected ? 'Live PostgreSQL' : 'Demo Mode'}
+        </span>
         <span className="header-date"><CalendarDays size={13} />{today}</span>
         <button className="header-icon-btn" aria-label="Notifications"><Bell size={16} /><span className="notification-dot" /></button>
         <div className="profile-chip"><span className="profile-avatar"><UserRound size={14} /></span><span className="profile-copy"><strong>Manoj</strong><small>Administrator</small></span><ChevronDown size={14} /></div>

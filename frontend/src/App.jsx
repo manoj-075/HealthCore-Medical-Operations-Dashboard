@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Activity, HeartPulse, ShieldPlus, Stethoscope } from 'lucide-react'
 import Sidebar from './components/Sidebar'
 import Header  from './components/Header'
+import ErrorBoundary from './components/ErrorBoundary'
 import Overview    from './pages/Overview'
 import Patients    from './pages/Patients'
 import Finance     from './pages/Finance'
@@ -12,7 +13,9 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+
       <div className="app-shell">
           <div className="ambient-scene" aria-hidden="true">
             <div className="ambient-photo" />
@@ -36,5 +39,6 @@ export default function App() {
         </div>
       </div>
     </BrowserRouter>
+    </ErrorBoundary>
   )
 }
